@@ -49,6 +49,8 @@ public class DiccionarioMultipleDinamica implements DiccionarioMultipleTDA {
 
         }
         ConjuntoTDA conjunto = new ConjutoDinamica();
+        conjunto.inicializarConjunto();
+        conjunto.agregar(valor);
         previous.setNext(new NodeDicMultiple(clave,conjunto,null));
         conjuntoClaves.agregar(clave);
     }
