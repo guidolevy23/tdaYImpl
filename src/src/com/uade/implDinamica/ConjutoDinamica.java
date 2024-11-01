@@ -96,6 +96,9 @@ public class ConjutoDinamica implements ConjuntoTDA {
         if(firstNode.getNext() == null && firstNode.getValue() != x) return false;
 
         Node current = firstNode.getNext();
+        if (firstNode.getValue() == x){
+            return true;
+        }
         while (current != null) {
             if (current.getValue() == x) return true;
             current = current.getNext();
