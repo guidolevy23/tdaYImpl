@@ -13,8 +13,10 @@ public class ColaTDAImpl implements ColaTDA {
 
     @Override
     public void acolar(int x) {
-        elementos[indice] = x;
-        indice++;
+        if (indice < 99) {
+            elementos[indice] = x;
+            indice++;
+        }
     }
 
     @Override
@@ -34,7 +36,8 @@ public class ColaTDAImpl implements ColaTDA {
         if (indice != 0) {
             return elementos[0];
         }else {
-            return 0;
+            System.out.println("No se puede mostrar el primero, porque esta vacia.");
+            return -1;
         }
     }
 

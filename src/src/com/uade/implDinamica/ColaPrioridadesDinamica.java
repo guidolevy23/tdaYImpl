@@ -39,7 +39,9 @@ public class ColaPrioridadesDinamica implements ColaPrioridadTDA {
         Node previousValor = this.firstValor;
 
         if (this.firstPrioridad.getValue() < p) {
+            nodo.setNext(this.firstPrioridad);
             this.firstPrioridad = nodo;
+            nodoValor.setNext(this.firstValor);
             this.firstValor = nodoValor;
             return;
         }
@@ -84,7 +86,7 @@ public class ColaPrioridadesDinamica implements ColaPrioridadTDA {
             return this.firstValor.getValue();
         }
         System.out.println("No se puede mostrar el primer valor de una cola vacia.");
-        return 0;
+        return -1;
     }
 
     @Override

@@ -54,7 +54,7 @@ public class ColaConPrioridadImpl implements ColaPrioridadTDA {
         if (indice < elementos.length) {
             return elementos[0];
         }
-        return 0;
+        return -1;
     }
 
     @Override

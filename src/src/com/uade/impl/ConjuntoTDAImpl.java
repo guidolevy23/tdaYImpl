@@ -9,25 +9,21 @@ public class ConjuntoTDAImpl implements ConjuntoTDA {
     Random random = new Random();
     @Override
     public void inicializarConjunto() {
-        paquete = new int[10];
+        paquete = new int[100];
         indice = 0;
     }
 
     @Override
     public void agregar(int x) {
-        if(indice < 9) {
-            boolean flag = false;
+        if(indice < 99) {
             for (int i = 0; i < indice; i++) {
                 if (paquete[i] == x) {
-                    flag = true;
+                    System.out.println("El elemento ya existe.");
+                    return;
                 }
             }
-            if (!flag) {
-                paquete[indice] = x;
-                indice++;
-            }else {
-                System.out.println("El elemento ya existe.");
-            }
+            paquete[indice] = x;
+            indice++;
         } else{
             System.out.println("El conjunto esta lleno.");
         }
@@ -35,12 +31,11 @@ public class ConjuntoTDAImpl implements ConjuntoTDA {
 
     @Override
     public int elegir() {
-        if(conjuntoVacio()){
+        if(conjuntoVacio()) {
             System.out.println("El conjunto esta vacio.");
-        } else {
-            return paquete[random.nextInt(indice)];
+            return -1;
         }
-        return 0;
+        return paquete[random.nextInt(indice)];
     }
 
     @Override
