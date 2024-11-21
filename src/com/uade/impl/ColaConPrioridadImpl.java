@@ -38,7 +38,7 @@ public class ColaConPrioridadImpl implements ColaPrioridadTDA {
 
     @Override
     public void desacolar() {
-        if(indice >= 0){
+        if(indice > 0){
             for (int i = 0; i < indice; i++) {
                 elementos[i] = elementos[i + 1];
                 prioridades[i] = prioridades[i + 1];

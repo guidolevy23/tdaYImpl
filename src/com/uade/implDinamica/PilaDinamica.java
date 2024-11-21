@@ -30,7 +30,7 @@ public class PilaDinamica implements PilaTDA {
         }
         else{
             System.out.println("No se puede mostrar el tope de una pila vacia");
-            return 0;
+            return -1;
         }
     }
 

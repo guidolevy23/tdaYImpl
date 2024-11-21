@@ -37,9 +37,9 @@ public class PilaTDAImpl implements PilaTDA {
     @Override
     public int tope() {
         /*Si aca hay algo en los indices devuelvo el valor */
-        if (indice > 0){
+        if (indice >= 0){
             /*Devuelvo el valor del paquete[indice] donde estoy parado*/
-            return paquete[indice];
+            return paquete[indice - 1];
         }
         System.out.println("No se puede devolver el tope porque esta vacia.");
         return -1;

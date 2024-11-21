@@ -1,0 +1,13 @@
+1)
+A) esta desbalanceado en el nodo 45 porque es de factor 4, el 55 es de factor -3, el 70 de factor
+    -3 y el 41 de factor 2.
+
+B) esta desbalanceado porque el nodo 32 tiene factor -2.
+
+3)
+A)
+B) No es un Arbol B porque el 46 no deberia ir entre el 21 y el 45.
+C)
+
+4)
+5) si elimino el 45 el 49 toma su lugar.

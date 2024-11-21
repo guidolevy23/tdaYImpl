@@ -1,5 +1,4 @@
 package com.uade.api;
-import com.uade.api.ConjuntoTDA;
 
 public interface DiccionarioSimpleTDA {
     void InicializarDiccionario();
