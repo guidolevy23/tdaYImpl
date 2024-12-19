@@ -1,10 +1,14 @@
 package com.uade.app;
 
+import com.uade.Main;
 import com.uade.api.ABBTDA;
 import com.uade.api.ConjuntoTDA;
+import com.uade.api.PilaTDA;
 import com.uade.impl.ConjuntoTDAImpl;
+import com.uade.impl.PilaTDAImpl;
 import com.uade.implDinamica.ABBDinamica;
 import com.uade.util.OperacionesConjunto;
+import com.uade.util.OperacionesPila;
 
 import java.util.Scanner;
 
@@ -17,6 +21,7 @@ public class AppABB {
     public void excecute() {
         ABBTDA arbol = new ABBDinamica();
         arbol.inicializarArbol();
+
         arbol.agregar(4);
         arbol.agregar(9);
         arbol.agregar(5);
@@ -24,6 +29,8 @@ public class AppABB {
         arbol.agregar(12);
         arbol.agregar(17);
         arbol.agregar(1);
+        arbol.agregar(6);
+
         ABBTDA arbol2 = new ABBDinamica();
         arbol2.inicializarArbol();
         arbol2.agregar(4);
@@ -34,14 +41,24 @@ public class AppABB {
         arbol2.agregar(17);
         arbol2.agregar(1);
 
-        Scanner sc = new Scanner(System.in);
-        int valor = sc.nextInt();
-        int elemento = 0;
-        ABBTDA subarbol = buscarElemento(arbol, valor);
-        if (!subarbol.arbolVacio()){
-            elemento = elementoInmediatamenteMenor(arbol, valor, elemento);
-        }
-        System.out.println(elemento);
+//        Scanner sc = new Scanner(System.in);
+//        int valor = sc.nextInt();
+//        int elemento = 0;
+//        ABBTDA subarbol = buscarElemento(arbol, valor);
+//        if (!subarbol.arbolVacio()){
+//            elemento = elementoInmediatamenteMenor(arbol, valor, elemento);
+//        }
+//        System.out.println(elemento);
+         /*
+                   4
+              1         9
+                    5      15
+                  6     12   17
+        /
+         */
+        int[] cant = productoPorNivel(arbol, 1);
+        System.out.println(cant[0]);
+        System.out.println(cant[1]);
 
     }
 
@@ -230,4 +247,228 @@ public class AppABB {
 
     }
 
+    private int contarElementosInternosSinRaiz(ABBTDA arbol){
+        return contarElementosInternos(arbol) - 1;
+
+    }
+
+    private int contarElementosInternos(ABBTDA arbol){
+        // aca me fijo que el arbol que estoy chequeando es vacio, osea es null la raiz, o que no tenga hijos osea sea una hoja. y devuelve 0 porque no suma si son hojas.
+        if(arbol.arbolVacio() || (arbol.hijoDer().arbolVacio() && arbol.hijoIzq().arbolVacio())){
+            return 0;
+        }
+
+        // aca voy a llegar lo mas a la izquierda abajo posible y de ahi voy a empezar a subir chequeando todos
+        int contadorIzquierda = contarElementosInternos(arbol.hijoIzq());
+        int contadorDerecha =  contarElementosInternos(arbol.hijoDer());
+
+        if(!arbol.hijoIzq().arbolVacio() || !arbol.hijoDer().arbolVacio()){
+            //aca en caso de que por lo menos tenga un hijo, a mi ya me consta para sumar 1 a ambos contadores.
+            return contadorIzquierda + contadorDerecha + 1;
+        } else{
+            return contadorIzquierda + contadorDerecha;
+        }
+    }
+
+    private boolean prefijoDelOtro(ABBTDA arbolPrefijo , ABBTDA arbol){
+        //Si llego a que el arbol del prefijo esta vacio significa, que todo lo anterior es igual
+        if(arbolPrefijo.arbolVacio()){
+            return true;
+        }
+        // si el arbol con el que comparo, esta vacio significa que el prefijo es mayor, no puede ser.
+        if(arbol.arbolVacio()){
+            return false;
+        }
+        // y si uno de los valores es distinto ya no sera prefijo.
+        if (arbolPrefijo.raiz() != arbol.raiz()){
+            return false;
+        }
+
+        //chequeo ambos lados, el derecho y el izquierdo
+        boolean prefijoIzq = prefijoDelOtro( arbolPrefijo.hijoIzq(), arbol.hijoIzq());
+        boolean prefijoDer = prefijoDelOtro(arbolPrefijo.hijoDer(), arbol.hijoDer());
+
+        //devuelvo la logica de si ambos son true es porque es todo true.
+        return prefijoDer && prefijoIzq;
+
+    }
+
+    private int cantNodosPorNivel(ABBTDA arbol, int desde, int hasta){
+    //previo a hacer recursividad tengoq que validar que le desde y el hasta sean validos.
+        if(desde > hasta || desde <= 0 || hasta <= 0 || arbol.arbolVacio()){
+            return 0;
+        }
+        return cantNodosRecursivo(arbol, 1, desde, hasta);
+    }
+
+    private int cantNodosRecursivo(ABBTDA arbol, int nivelActual, int desde, int hasta){
+/*
+                4
+              1    9
+                  5  15
+                    12 17
+        1 - 3
+         */
+        if(arbol.arbolVacio()){
+            return 0;
+        }
+        int contador = 0;
+
+        if(desde <= nivelActual && nivelActual <= hasta ){
+            contador++;
+        }
+
+        contador += cantNodosRecursivo(arbol.hijoIzq(),nivelActual + 1,desde, hasta);
+        contador += cantNodosRecursivo(arbol.hijoDer(),nivelActual + 1, desde, hasta);
+
+        return contador;
+    }
+
+    private boolean existenDosNaturalesQueSumanN(ABBTDA arbol, int n){
+        // para esto puedo crearun conjunto donde guarde todos los valores del arbol para poder recorrerlo mucho mas facil que un arbol para hacer calculos y demas.
+        ConjuntoTDA conjunto = new ConjuntoTDAImpl();
+        conjunto.inicializarConjunto();
+
+        recorrerRecursivamente(arbol, conjunto);
+
+        while(!conjunto.conjuntoVacio()){
+            int numero = conjunto.elegir();
+            if(conjunto.pertenece(n - numero)){
+                return true;
+            }
+            conjunto.sacar(numero);
+        }
+        return false;
+
+
+
+    }
+
+    private void recorrerRecursivamente(ABBTDA arbol, ConjuntoTDA conjunto){
+        if(arbol.arbolVacio()){
+            return ;
+        }
+        conjunto.agregar(arbol.raiz());
+
+        recorrerRecursivamente(arbol.hijoIzq(), conjunto);
+        recorrerRecursivamente(arbol.hijoDer(), conjunto);
+    }
+
+    private int nivelMasNodos(ABBTDA arbol, int hasta){
+        if(arbol.arbolVacio()){
+            return 0;
+        }
+
+        int [] contador = new int[hasta];
+        nivelMasNodosRecursivo(arbol, 1, hasta, contador);
+        int nivelMaximo = Integer.MIN_VALUE;
+        int maximo = Integer.MIN_VALUE;
+        for(int i = 0; i < hasta; i++){
+            if (contador[i] > maximo){
+                maximo = contador[i];
+                nivelMaximo = i + 1;
+
+            }
+        }
+        return nivelMaximo;
+    }
+
+    private void nivelMasNodosRecursivo(ABBTDA arbol, int nivel, int hasta, int[] contador ){
+         /*
+                4
+              1    9
+               3  5  15
+                    12 17
+        /
+         */
+        if(nivel > hasta || arbol.arbolVacio()){
+            return;
+        }
+
+        contador[nivel - 1]++;
+
+        nivelMasNodosRecursivo(arbol.hijoDer(),nivel + 1, hasta , contador );
+        nivelMasNodosRecursivo(arbol.hijoIzq(),nivel + 1, hasta, contador );
+
+    }
+
+    private PilaTDA pilaRamaMasLarga(ABBTDA arbol){
+        PilaTDA pila = new PilaTDAImpl();
+        pila.inicializarPila();
+
+        if (arbol.arbolVacio()) return pila;
+
+        obtenerRamaMasLarga(arbol, pila);
+
+        return pila;
+
+    }
+    private int obtenerRamaMasLarga(ABBTDA arbol, PilaTDA pila){
+        if (arbol.arbolVacio()){
+            return 0 ;
+        }
+        pila.apilar(arbol.raiz());
+
+        PilaTDA pilaIzq = new PilaTDAImpl();
+        pilaIzq.inicializarPila();
+
+        PilaTDA pilaDer  = new PilaTDAImpl();
+        pilaDer.inicializarPila();
+
+        int longitudIzq = obtenerRamaMasLarga(arbol.hijoIzq(),pilaIzq);
+        int longitudDer = obtenerRamaMasLarga(arbol.hijoDer(),pilaIzq);
+
+        OperacionesPila operacionesPila = new OperacionesPila();
+
+        if(longitudIzq> longitudDer){
+            operacionesPila.copiarPila(pilaIzq, pila);
+        } else{
+            operacionesPila.copiarPila(pilaDer,pila);
+        }
+        return Math.max(longitudIzq, longitudDer) + 1;
+
+    }
+
+    private int sumaRestaPorNivel(ABBTDA arbol, int nivel ){
+        if(arbol.arbolVacio()){
+            return 0;
+        }
+        int sumaYResta = 0;
+
+        sumaYResta = nivel % 2 == 0 ? arbol.raiz() : -arbol.raiz();
+
+        sumaYResta += sumaRestaPorNivel(arbol.hijoIzq(), nivel + 1);
+        sumaYResta += sumaRestaPorNivel(arbol.hijoDer(), nivel + 1);
+
+        return sumaYResta;
+
+
+    }
+
+    private int[] productoPorNivel(ABBTDA arbol, int nivel){
+        if(arbol.arbolVacio()){
+            return new int []{1,1};
+        }
+        int [] contador = new int[] {1,1};
+
+        if(nivel % 2 == 0){
+            contador[0] *= arbol.raiz();
+        } else{
+            contador[1] *= arbol.raiz();
+        }
+        contador[0] *= productoPorNivel(arbol.hijoIzq(), nivel + 1)[0];
+        contador[0] *= productoPorNivel(arbol.hijoDer(), nivel + 1)[0];
+        contador[1] *= productoPorNivel(arbol.hijoDer(), nivel + 1)[1];
+        contador[1] *= productoPorNivel(arbol.hijoIzq(), nivel + 1)[1];
+
+        return contador;
+    }
+
+    private void crearArbolPostOrder(int[] numeros, ABBTDA arbol){
+        for(int i = numeros.length - 1; i>=0; i--){
+            arbol.agregar(numeros[i]);
+        }
+    }
+
 }
+

@@ -33,4 +33,21 @@ public class OperacionesPila {
         }
         System.out.println("Pila cargada correctamente.");
     }
+
+    public void copiarPila( PilaTDA pila1, PilaTDA pila2 ) {
+        PilaTDA auxiliar = new PilaTDAImpl();
+        auxiliar.inicializarPila();
+        while(!pila1.pilaVacia()){
+            int numero = pila1.tope();
+            pila1.desapilar();
+            auxiliar.apilar(numero);
+        }
+        while(!auxiliar.pilaVacia()){
+            int numero = auxiliar.tope();
+            auxiliar.desapilar();
+            pila2.apilar(numero);
+        }
+        System.out.println("Pila 2 copiada.");
+
+    }
 }
